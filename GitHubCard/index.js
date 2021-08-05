@@ -1,9 +1,23 @@
+// const { default: axios } = require("axios");
+
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
+const entryPoint = document.querySelector('.cards')
 
+function githubUser (){
+  axios.get('https://api.github.com/users/jMisch44')
+  .then(res => {
+    const card = createUserCard(res.data);
+    entryPoint.appendChild(card)
+  })
+  .catch(err => {
+    console.error(err);
+  })
+}
+githubUser();
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -17,6 +31,8 @@
     and append the returned markup to the DOM as a child of .cards
 */
 
+
+
 /*
   STEP 5: Now that you have your own card getting added to the DOM, either
     follow this link in your browser https://api.github.com/users/<Your github name>/followers,
@@ -27,8 +43,71 @@
     Using that array, iterate over it, requesting data for each user, creating a new card for each
     user, and adding that card to the DOM.
 */
+const followersArray = ['BigKnell', 'luishrd', 'justsml', 'dustinmyers', 'tetondan'];
 
-const followersArray = [];
+function fivePeopleArray(gitUserArray){
+gitUserArray.forEach(item => {
+  axios.get(`https://api.github.com/users/${item}`).then(res => {
+    const card = createUserCard(res.data);
+    entryPoint.appendChild(card)
+  })
+  .catch(err => {
+    console.error(err);
+  })
+})
+}
+
+fivePeopleArray(followersArray);
+
+
+
+function createUserCard( obj ) {
+  //created elements
+  console.log(obj);
+  const userCard = document.createElement('div');
+  const userImage = document.createElement('img');
+  const allInfoCard = document.createElement('div');
+  const userName = document.createElement('h3');
+  const  userUserName = document.createElement('p');
+  const livingLocation = document.createElement('p');
+  const profile = document.createElement('p');
+  const profileLink = document.createElement('a');
+  const whoAreFollowers = document.createElement('p');
+  const whoAreFollowing = document.createElement('p');
+  const userBio = document.createElement('p');
+
+  //parent child relations
+  
+  profile.textContent =  `profile:`;
+   
+  userCard.appendChild(userImage);
+  userCard.appendChild(allInfoCard);
+  allInfoCard.appendChild(userName);
+  allInfoCard.appendChild(userUserName);
+  allInfoCard.appendChild(livingLocation);  allInfoCard.appendChild(profile);   
+  profile.appendChild(profileLink);
+  allInfoCard.appendChild(whoAreFollowers);
+  allInfoCard.appendChild(whoAreFollowing);
+  allInfoCard.appendChild(userBio);
+
+  //assigning class names
+  userCard.classList.add('card');
+  allInfoCard.classList.add('card-info');
+  userName.classList.add('name');
+  userUserName.classList.add('username');
+ 
+  // //assigning text or info to the elements
+  userImage.src = `${obj['avatar_url']}`;
+  userName.textContent = `${obj['name']}`; 
+   userUserName.textContent = `${obj['login']}`;
+   livingLocation.textContent = `${obj['location']}`;
+  profileLink.href = obj['html_url'];
+  profileLink.textContent =  `${obj['html_url']}`;
+  whoAreFollowers.textContent = `Followers: ${obj['followers']}`;
+   whoAreFollowing.textContent = `Following: ${obj['following']}`;
+   userBio.textContent = `Bio: ${obj['bio']}`;
+  return userCard;
+}
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
