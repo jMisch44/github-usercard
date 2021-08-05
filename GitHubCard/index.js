@@ -1,3 +1,5 @@
+// const { default: axios } = require("axios");
+
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
@@ -30,6 +32,7 @@ githubUser();
 */
 
 
+
 /*
   STEP 5: Now that you have your own card getting added to the DOM, either
     follow this link in your browser https://api.github.com/users/<Your github name>/followers,
@@ -40,8 +43,23 @@ githubUser();
     Using that array, iterate over it, requesting data for each user, creating a new card for each
     user, and adding that card to the DOM.
 */
+const followersArray = ['BigKnell', 'luishrd', 'justsml', 'dustinmyers', 'tetondan'];
 
-const followersArray = ['https://api.github.com/users/BigKnell', 'https://api.github.com/users/luishrd', 'https://api.github.com/users/justsml', 'https://api.github.com/users/dustinmyers', 'https://api.github.com/users/tetondan'];
+function fivePeopleArray(gitUserArray){
+gitUserArray.forEach(item => {
+  axios.get(`https://api.github.com/users/${item}`).then(res => {
+    const card = createUserCard(res.data);
+    entryPoint.appendChild(card)
+  })
+  .catch(err => {
+    console.error(err);
+  })
+})
+}
+
+fivePeopleArray(followersArray);
+
+
 
 function createUserCard( obj ) {
   //created elements
@@ -59,12 +77,14 @@ function createUserCard( obj ) {
   const userBio = document.createElement('p');
 
   //parent child relations
+  
+  profile.textContent =  `profile:`;
+   
   userCard.appendChild(userImage);
   userCard.appendChild(allInfoCard);
   allInfoCard.appendChild(userName);
   allInfoCard.appendChild(userUserName);
-  allInfoCard.appendChild(livingLocation);
-  allInfoCard.appendChild(profile);
+  allInfoCard.appendChild(livingLocation);  allInfoCard.appendChild(profile);   
   profile.appendChild(profileLink);
   allInfoCard.appendChild(whoAreFollowers);
   allInfoCard.appendChild(whoAreFollowing);
@@ -77,14 +97,15 @@ function createUserCard( obj ) {
   userUserName.classList.add('username');
  
   // //assigning text or info to the elements
-  userImage.src = obj['avatar_url'];
+  userImage.src = `${obj['avatar_url']}`;
   userName.textContent = `${obj['name']}`; 
-   userName.textContent = obj['login']
-   livingLocation.textContent = obj['location'];
-   profileLink.href = `${obj['html_url']}`;
-   whoAreFollowers.textContent = obj['followers'];
-   whoAreFollowing.textContent = obj['following'];
-   userBio.textContent = obj['bio'];
+   userUserName.textContent = `${obj['login']}`;
+   livingLocation.textContent = `${obj['location']}`;
+  profileLink.href = obj['html_url'];
+  profileLink.textContent =  `${obj['html_url']}`;
+  whoAreFollowers.textContent = `Followers: ${obj['followers']}`;
+   whoAreFollowing.textContent = `Following: ${obj['following']}`;
+   userBio.textContent = `Bio: ${obj['bio']}`;
   return userCard;
 }
 
